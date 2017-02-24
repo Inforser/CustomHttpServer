@@ -91,16 +91,17 @@
             var output = new StringBuilder();
             output.Append($"<h3> Directory: {this.Request.Url} </h3>");
             output.Append("<ul>");
+            var trailPath = localPath.Replace(this.BasePath, "") + "\\";
             foreach (var folder in Directory.GetDirectories(localPath).OrderBy(d => d))
             {
                 var dirInfo = new DirectoryInfo(folder);
-                output.Append(string.Format("<li><a href=\"{0}\">{0}/</a></li>", dirInfo.Name));
+                output.Append(string.Format("<li><a href=\"{0}{1}\">{1}/</a></li>", trailPath, dirInfo.Name));
             }
 
             foreach (var entry in Directory.GetFiles(localPath).OrderBy(f => f))
             {
                 var fileInfo = new FileInfo(entry);
-                output.Append(string.Format("<li><a href=\"{0}\">{0}</a></li>", fileInfo.Name));
+                output.Append(string.Format("<li><a href=\"{0}{1}\">{1}</a></li>",trailPath , fileInfo.Name));
             }
 
             output.Append("</ul>");
