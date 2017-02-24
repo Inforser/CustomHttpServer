@@ -1,4 +1,5 @@
 ﻿// ReSharper disable MemberCanBeMadeStatic.Local
+
 namespace CustomHttpServer
 {
     using System;
@@ -7,19 +8,21 @@ namespace CustomHttpServer
     using System.Linq;
     using System.Net.Sockets;
     using System.Text;
+    using System.Text.RegularExpressions;
     using CustomHttpServer.Enums;
     using CustomHttpServer.Models;
+    using CustomHttpServer.RouteHandlers;
     using CustomHttpServer.Utilities;
 
     public class HttpProcessor
     {
-        private IList<Route> routes;
+        private readonly IList<Route> routes;
         private HttpRequest request;
         private HttpResponse response;
 
         public HttpProcessor(IEnumerable<Route> routes)
         {
-            this.routes = new List<Route>(routes);
+            this.routes = new List<Route>(DefaultRoutes.AppendDefaultRoutes(routes));
         }
 
         public void HandleClient(TcpClient tcpClient)
@@ -49,11 +52,11 @@ namespace CustomHttpServer
             var method = (RequestMethod) Enum.Parse(typeof(RequestMethod), tokens[0].ToUpper());
             string url = tokens[1];
             //string protocolVersion = tokens[2];
-            
+
             Header header = this.ReadHeader(inputStream);
-            
+
             var content = this.ReadContent(inputStream, header);
-            
+
             var resultRequest = new HttpRequest()
             {
                 Method = method,
@@ -141,7 +144,35 @@ namespace CustomHttpServer
 
         private HttpResponse RouteRequest()
         {
-            throw new NotImplementedException();
+            var matchedRoutes = this.routes
+                .Where(r => Regex.Match(this.request.Url, r.UrlRegex).Success)
+                .ToList();
+
+            if (!matchedRoutes.Any())
+            {
+                return HttpResponseBuilder.NotFound();
+            }
+
+            var route = matchedRoutes.FirstOrDefault(r => r.Method == this.request.Method);
+
+            if (route == null)
+            {
+                return new HttpResponse()
+                {
+                    StatusCode = ResponseStatusCode.MethodNotAllowed
+                };
+            }
+            
+            try
+            {
+                return route.Callable(this.request);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                return HttpResponseBuilder.InternalServerError();
+            }
         }
     }
 }

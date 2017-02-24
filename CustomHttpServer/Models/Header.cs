@@ -60,7 +60,6 @@
             }
 
             header.AppendLine();
-            header.AppendLine();
 
             return header.ToString();
         }

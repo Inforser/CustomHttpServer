@@ -9,7 +9,7 @@
             this.Header = new Header(HeaderType.HttpRequest);
         }
 
-        public RequestMethod Method { get; private set; }
+        public RequestMethod Method { get; set; }
 
         public string Url { get; set; }
 

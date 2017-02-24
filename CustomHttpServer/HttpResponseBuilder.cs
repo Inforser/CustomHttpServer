@@ -8,7 +8,7 @@
     {
         public static HttpResponse InternalServerError()
         {
-            string content = File.ReadAllText("Resources/Pages/500.html"); //TODO: Check link!
+            string content = File.ReadAllText("E:\\Repos\\CustomHttpServer\\CustomHttpServer\\Resources\\Pages\\500.html"); //TODO: Check link!
 
             return new HttpResponse()
             {
@@ -19,7 +19,7 @@
 
         public static HttpResponse NotFound()
         {
-            string content = File.ReadAllText("Resources/Pages/404.html");
+            string content = File.ReadAllText("E:\\Repos\\CustomHttpServer\\CustomHttpServer\\Resources\\Pages\\404.html");
 
             return new HttpResponse()
             {
