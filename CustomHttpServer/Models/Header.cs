@@ -10,7 +10,6 @@
         {
             this.Type = type;
             this.ContentType = "text/html";
-            //this.ContentLength = ?;
             this.OtherParameters = new Dictionary<string, string>();
             this.Cookies = new CookieCollection();
         }
@@ -20,6 +19,8 @@
         public string ContentType { get; set; }
 
         public string ContentLength { get; set; }
+
+        public string Location { get; set; }
 
         public IDictionary<string, string> OtherParameters { get; set; }
 
@@ -34,6 +35,11 @@
         {
             StringBuilder header = new StringBuilder();
             header.AppendLine("Content-type: " + this.ContentType);
+            if (this.Location != null)
+            {
+                header.AppendLine("Location: " + this.Location);
+            }
+
             if (this.Cookies.Count > 0)
             {
                 if (this.Type == HeaderType.HttpRequest)
@@ -54,7 +60,7 @@
                 header.AppendLine("Content-Lenght: " + this.ContentLength);
             }
 
-            foreach (var otherParameter in OtherParameters)
+            foreach (var otherParameter in this.OtherParameters)
             {
                 header.AppendLine($"{otherParameter.Key}: {otherParameter.Value}");
             }

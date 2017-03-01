@@ -36,7 +36,9 @@ namespace CustomHttpServer
                 this.response = this.RouteRequest();
                 Console.WriteLine("-RESPONSE-------------");
                 Console.WriteLine(this.response.Header);
-                //Console.WriteLine(Encoding.UTF8.GetString(this.response.Content));
+                //
+                Console.WriteLine(Encoding.UTF8.GetString(this.response.Content));
+                //
                 Console.WriteLine("----------------------");
                 StreamUtils.WriteResponse(stream, this.response);
             }
@@ -120,6 +122,10 @@ namespace CustomHttpServer
                         var cookie = new Cookie(cookiePair[0], cookiePair[1]);
                         header.AddCookie(cookie);
                     }
+                }
+                else if (name.ToLower() == "location")
+                {
+                    header.Location = value;
                 }
                 else if (name.ToLower() == "content-length")
                 {
