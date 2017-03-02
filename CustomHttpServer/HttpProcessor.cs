@@ -48,10 +48,11 @@ namespace CustomHttpServer
         {
             // 1. Read request line
             string requestLine = StreamUtils.ReadLine(inputStream);
-            string[] tokens = requestLine.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
-            if (tokens.Length != 3)
+            string[] tokens = requestLine.Split(' ');
+            while (tokens.Length != 3)
             {
-                throw new Exception("Invalid http request line!");
+                requestLine = StreamUtils.ReadLine(inputStream);
+                tokens = requestLine.Split(' ');
             }
 
             var method = (RequestMethod) Enum.Parse(typeof(RequestMethod), tokens[0].ToUpper());
